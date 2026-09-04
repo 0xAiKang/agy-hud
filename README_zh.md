@@ -1,0 +1,115 @@
+# 🚀 AGY Statusline
+
+为 **Google Antigravity CLI (`agy`)** 与 **Gemini CLI** 打造的实时两行 HUD 终端状态栏。
+
+[English](README.md) | [中文说明](README_zh.md)
+
+```text
+🤖 3.8 Flash (High) │ 📁 my-project │ 🌿 main │ ⚡ reviewing
+🧠 Context ██░░░░░░░░ 244.6k/1.0M (24.5%) │ ⏳ 5h: 95% (4h 56m) │ 📅 Wk: 99% (167h 56m)
+```
+
+---
+
+## ✨ 特性
+
+- 🤖 **精简模型显示** — 智能提取并简化模型名称（如 `Gemini 3.8 Flash High` → `3.8 Flash (High)`），节约终端行空间，保留版本核心信息。
+- 📁 **工作目录展示** — 实时展示当前项目目录。
+- 🌿 **极速 Git 分支检测** — 通过向上遍历目录直接解析 `.git/HEAD` 文件（原生兼容主分支、Git Worktree 与 Submodule），**不启动任何 Git 子进程**，零性能损耗、毫秒级响应。
+- ⚡ **Agent 运行状态** — 实时反映 Agent 当前生命周期（`idle`、`ready`、`reviewing` 等），带自适应颜色高亮。
+- 🧠 **Context 进度条与 Token 统计** — 直观展示上下文用量进度条（`██░░░░░░░░`）与 Token 计数（如 `244.6k/1.0M`），三段颜色预警：
+  - 🟢 绿色（< 60%）
+  - 🟡 黄色（60% - 85%）
+  - 🔴 红色（≥ 85%）
+- ⏳ **5 小时滚动配额跟踪** — 实时显示 5 小时内剩余额度百分比及重置倒计时（例如 `95% (4h 56m)`）。
+- 📅 **每周配额跟踪** — 实时显示每周剩余额度百分比及重置倒计时（例如 `99% (167h 56m)`）。
+- 🪶 **零外部依赖** — 纯 Python 3 标准库（`sys`、`json`、`os`）实现，原生跨平台支持 Windows、macOS 与 Linux。
+
+---
+
+## ⚡ 快速安装
+
+### 方式 1：自动安装脚本（推荐）
+
+1. 克隆本仓库：
+   ```bash
+   git clone https://github.com/doraemonkeys/agy-statusline.git
+   cd agy-statusline
+   ```
+
+2. 运行安装脚本：
+   ```bash
+   python install.py
+   ```
+
+安装脚本将自动执行：
+- 将 `statusline.py` 复制到 `~/.gemini/antigravity-cli/statusline.py`
+- 自动备份你现有的 `settings.json`（带有时间戳）
+- 自动向 `settings.json` 写入 `"statusLine"` 命令钩子配置
+
+### 方式 2：手动配置
+
+1. 将 `statusline.py` 复制到 Antigravity CLI 配置目录下：
+   - **Windows**：`C:\Users\<你的用户名>\.gemini\antigravity-cli\statusline.py`
+   - **macOS / Linux**：`~/.gemini/antigravity-cli/statusline.py`
+
+2. 打开 `~/.gemini/antigravity-cli/settings.json`，在最外层加入或更新 `"statusLine"` 节点：
+
+   ```json
+   {
+     "statusLine": {
+       "type": "command",
+       "command": "python ~/.gemini/antigravity-cli/statusline.py",
+       "enabled": true
+     }
+   }
+   ```
+
+   *(Windows 环境建议使用正斜杠路径，例如 `"python C:/Users/<你的用户名>/.gemini/antigravity-cli/statusline.py"`)*。
+
+---
+
+## 🔍 预览与测试
+
+无需启动 Antigravity，即可在终端直接预览状态栏的渲染效果：
+
+```bash
+python statusline.py --preview
+```
+
+效果输出：
+```text
+🤖 3.8 Flash (High) │ 📁 agy-statusline │ 🌿 main │ ⚡ reviewing
+🧠 Context ██░░░░░░░░ 244.6k/1.0M (24.5%) │ ⏳ 5h: 95% (4h 56m) │ 📅 Wk: 99% (167h 56m)
+```
+
+---
+
+## 🛠️ 工作原理
+
+Google Antigravity CLI (`agy`) 在每次交互更新时，都会将当前环境状态的 JSON 数据流式写入标准输入（`stdin`）。`statusline.py` 读取并解析以下数据：
+- `model`: 模型配置及显示名
+- `cwd` / `workspace`: 当前工作目录
+- `agent_state`: Agent 当前生命周期状态
+- `context_window`: 当前使用的 Token 数、最大 Token 限制及使用比例
+- `quota`: 5 小时滚动配额、每周配额及重置秒数倒计时
+
+最后格式化为带有 ANSI 颜色高亮的两行文本输出给 Antigravity HUD 渲染。
+
+---
+
+## 🗑️ 卸载
+
+如需卸载状态栏配置：
+
+```bash
+python install.py --uninstall
+```
+
+或者直接在 `settings.json` 中删除 `"statusLine"` 配置项即可。
+
+---
+
+## 📄 开源协议
+
+[MIT License](LICENSE) © 2025-2026 doraemonkeys
