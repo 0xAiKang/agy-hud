@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 260" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0f141c; rx: 12px; }
+      .titlebar { fill: #161d27; }
+      .dot-red { fill: #ff5f56; }
+      .dot-yellow { fill: #ffbd2e; }
+      .dot-green { fill: #27c93f; }
+      .title-text { fill: #7d8b99; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; font-weight: 500; }
+      .code { font-family: "JetBrains Mono", "SF Mono", "Fira Code", Menlo, Monaco, monospace; font-size: 14px; line-height: 24px; }
+      .t-cyan { fill: #00e5ff; font-weight: bold; }
+      .t-magenta { fill: #d946ef; }
+      .t-yellow { fill: #eab308; }
+      .t-green { fill: #22c55e; }
+      .t-gray { fill: #64748b; }
+      .t-white { fill: #f8fafc; }
+      .t-dim { fill: #94a3b8; }
+      .t-bar-fill { fill: #22c55e; }
+      .t-bar-empty { fill: #334155; }
+    </style>
+  </defs>
+
+  <!-- Window Container -->
+  <rect width="940" height="260" class="bg" />
+
+  <!-- Titlebar -->
+  <path d="M 0 12 C 0 5.373 5.373 0 12 0 L 928 0 C 934.627 0 940 5.373 940 12 L 940 38 L 0 38 Z" class="titlebar" />
+  <circle cx="20" cy="19" r="6" class="dot-red" />
+  <circle cx="40" cy="19" r="6" class="dot-yellow" />
+  <circle cx="60" cy="19" r="6" class="dot-green" />
+  <text x="470" y="24" text-anchor="middle" class="title-text">Antigravity CLI — agy-hud statusline</text>
+
+  <!-- Terminal Content -->
+  <g transform="translate(24, 70)" class="code">
+    <!-- Line 1: Header -->
+    <text y="0">
+      <tspan class="t-cyan">[3.8 Flash (High)</tspan><tspan class="t-magenta"> ◑ high</tspan><tspan class="t-cyan">]</tspan>
+      <tspan class="t-gray"> │ </tspan>
+      <tspan class="t-yellow">Antigravity</tspan>
+      <tspan class="t-gray"> │ </tspan>
+      <tspan class="t-white">调研开发 agy-hud</tspan>
+      <tspan class="t-gray"> │ </tspan>
+      <tspan class="t-dim">⏱ 48m</tspan>
+      <tspan class="t-gray"> │ </tspan>
+      <tspan class="t-dim">Cost </tspan><tspan class="t-green">~$0.04</tspan>
+    </text>
+
+    <!-- Line 2: Context & Quotas -->
+    <text y="32">
+      <tspan class="t-white">🧠 Context </tspan>
+      <tspan class="t-bar-fill">█</tspan><tspan class="t-bar-empty">░░░░░░░░░</tspan>
+      <tspan class="t-white"> 14.0% (147k/1.05M)</tspan>
+      <tspan class="t-gray"> │ </tspan>
+      <tspan class="t-white">⏳ 5h: </tspan><tspan class="t-green">94%</tspan><tspan class="t-gray"> (4h 30m)</tspan>
+      <tspan class="t-gray"> │ </tspan>
+      <tspan class="t-white">📅 Wk: </tspan><tspan class="t-green">98%</tspan><tspan class="t-gray"> (6d 0h)</tspan>
+    </text>
+
+    <!-- Line 3: Assets -->
+    <text y="64">
+      <tspan class="t-yellow">⚡ 1 AGENTS.md</tspan>
+      <tspan class="t-gray"> │ </tspan>
+      <tspan class="t-cyan">1 MCP (river-memory)</tspan>
+      <tspan class="t-gray"> │ </tspan>
+      <tspan class="t-magenta">93 Skills</tspan>
+      <tspan class="t-gray"> │ </tspan>
+      <tspan class="t-green">🛡️ bypass permissions on</tspan>
+    </text>
+
+    <!-- Line 4: Tools -->
+    <text y="96">
+      <tspan class="t-white">🔧 </tspan>
+      <tspan class="t-green">✓</tspan><tspan class="t-white"> Bash </tspan><tspan class="t-gray">×43</tspan>
+      <tspan class="t-gray"> │ </tspan>
+      <tspan class="t-green">✓</tspan><tspan class="t-white"> View </tspan><tspan class="t-gray">×10</tspan>
+      <tspan class="t-gray"> │ </tspan>
+      <tspan class="t-green">✓</tspan><tspan class="t-white"> Edit </tspan><tspan class="t-gray">×5</tspan>
+      <tspan class="t-gray"> │ </tspan>
+      <tspan class="t-green">✓</tspan><tspan class="t-white"> Web </tspan><tspan class="t-gray">×1</tspan>
+      <tspan class="t-gray"> │ </tspan>
+      <tspan class="t-cyan">🎯 Skills: ak-skills-update, agy-customizations</tspan>
+    </text>
+
+    <!-- Line 5: Tokens -->
+    <text y="128">
+      <tspan class="t-white">📊 Tokens: 147k </tspan>
+      <tspan class="t-dim">(in: 3.4k, out: 680, cache: 92.1k · </tspan><tspan class="t-green">96.4% hit</tspan><tspan class="t-dim">)</tspan>
+    </text>
+  </g>
+</svg>

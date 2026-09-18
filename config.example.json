@@ -1,0 +1,17 @@
+{
+  "mode": "full",
+  "show_header": true,
+  "show_context": true,
+  "show_quotas": true,
+  "show_assets": true,
+  "show_tools": true,
+  "show_tokens": true,
+  "show_cost": true,
+  "show_duration": true,
+  "show_skills": true,
+  "show_last_action": true,
+  "show_git_branch": true,
+  "show_cwd": true,
+  "progress_bar_width": 10,
+  "cost_currency": "$"
+}

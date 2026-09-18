@@ -1,115 +1,135 @@
-# 🚀 AGY Statusline
+# 🚀 AGY-HUD
 
-为 **Google Antigravity CLI (`agy`)** 与 **Gemini CLI** 打造的实时两行 HUD 终端状态栏。
+**专为 Google Antigravity CLI (`agy`) 打造的高密度实时状态栏（Statusline HUD）**
 
-[English](README.md) | [中文说明](README_zh.md)
+参考 Claude-HUD 的全景信息架构设计，以极低的系统开销（< 20ms、零外部依赖）在终端输入框下方实时呈现当前会话的模型、花费、上下文容量、工具执行统计与环境资产。
 
+[English](README.md) | [中文文档](README_zh.md)
+
+<p align="center">
+  <img src="docs/preview.svg" alt="AGY-HUD 实时效果预览" width="100%">
+</p>
+
+---
+
+## ✨ 核心特性
+
+- 💰 **实时 Token 费用估算**：根据当前模型（Gemini 3.8/3.5/Pro 等）与会话累积消耗，精准计算美元花费（自动计算 Prompt Cache 缓存折扣）。
+- 🔧 **工具调用战报**：实时统计当前会话执行的命令（`✓ Bash ×43`）、读取文件（`✓ View ×10`）、编辑文件（`✓ Edit ×5`）等调用次数。
+- 🎯 **Skill 调用感知**：自动捕获 Agent 在当前对话中触发加载的技能（如 `ak-skills-update`、`agy-customizations`）。
+- 🧠 **上下文占用进度条**：直观展示已用 Token、总容量与占用百分比（`14.0% (147k/1.05M)`），随水位自动切换绿、黄、红三级警示色。
+- ⏳ **双配额滚动追踪**：实时监控 5 小时会话配额与 7 天周配额，清晰展示重置倒计时（如 `94% (4h 30m)`）。
+- ⚡ **环境资产一览**：自动识别当前工程挂载的规则文件（如 `AGENTS.md`）、已加载的 MCP 服务（如 `river-memory`）、Skills 数量与权限旁路状态。
+- 📊 **Token 吞吐明细**：详细呈现每轮对话的输入、输出、Cache 命中量及缓存命中率。
+- 🪶 **极速零依赖**：基于 Python 3 标准库构建，无需安装任何 npm 包或 pip 依赖，跨平台即装即用。
+
+---
+
+## 🖥️ 布局模式（4 种形态自由切换）
+
+AGY-HUD 支持在 `config.json` 中一键切换 4 种预设模式：
+
+### 1. 完整全景模式 (`full`，默认推荐)
+展示全部 5 行信息，信息最全、掌控感最强：
 ```text
-🤖 3.8 Flash (High) │ 📁 my-project │ 🌿 main │ ⚡ reviewing
-🧠 Context ██░░░░░░░░ 244.6k/1.0M (24.5%) │ ⏳ 5h: 95% (4h 56m) │ 📅 Wk: 99% (167h 56m)
+[3.8 Flash (High) ◑ high] │ Antigravity │ 调研开发 agy-hud │ ⏱ 48m │ Cost ~$0.04
+🧠 Context █░░░░░░░░░ 14.0% (147k/1.05M) │ ⏳ 5h: 94% (4h 30m) │ 📅 Wk: 98% (6d 0h)
+⚡ 1 AGENTS.md │ 1 MCP (river-memory) │ 93 Skills │ 🛡️ bypass permissions on
+🔧 ✓ Bash ×43 │ ✓ View ×10 │ ✓ Edit ×5 │ ✓ Web ×1 │ 🎯 Skills: ak-skills-update
+📊 Tokens: 147k (in: 3.4k, out: 680, cache: 92.1k · 96.4% hit)
+```
+
+### 2. 标准平衡模式 (`standard`)
+保留核心 Header、上下文配额与工具战报（共 3 行）：
+```text
+[3.8 Flash (High) ◑ high] │ Antigravity │ 调研开发 agy-hud │ ⏱ 48m │ Cost ~$0.04
+🧠 Context █░░░░░░░░░ 14.0% (147k/1.05M) │ ⏳ 5h: 94% (4h 30m) │ 📅 Wk: 98% (6d 0h)
+🔧 ✓ Bash ×43 │ ✓ View ×10 │ ✓ Edit ×5 │ 🎯 Skills: ak-skills-update
+```
+
+### 3. 经典双行模式 (`compact`)
+适合喜欢更窄状态栏的用户（共 2 行）：
+```text
+🤖 3.8 Flash (High) │ 📁 agy-hud │ 🌿 main │ ⚡ working
+🧠 Context █░░░░░░░░░ 14.0% (147k/1.05M) │ ⏳ 5h: 94% (4h 30m) │ 📅 Wk: 98% (6d 0h) │ ~$0.04
+```
+
+### 4. 极简单行模式 (`minimal`)
+单行极窄展示：
+```text
+🤖 3.8 Flash (High) │ 🧠 █░░░░░░░ 14% │ ⚡ working
 ```
 
 ---
 
-## ✨ 特性
+## ⚡ 快速安装与使用
 
-- 🤖 **精简模型显示** — 智能提取并简化模型名称（如 `Gemini 3.8 Flash High` → `3.8 Flash (High)`），节约终端行空间，保留版本核心信息。
-- 📁 **工作目录展示** — 实时展示当前项目目录。
-- 🌿 **极速 Git 分支检测** — 通过向上遍历目录直接解析 `.git/HEAD` 文件（原生兼容主分支、Git Worktree 与 Submodule），**不启动任何 Git 子进程**，零性能损耗、毫秒级响应。
-- ⚡ **Agent 运行状态** — 实时反映 Agent 当前生命周期（`idle`、`ready`、`reviewing` 等），带自适应颜色高亮。
-- 🧠 **Context 进度条与 Token 统计** — 直观展示上下文用量进度条（`██░░░░░░░░`）与 Token 计数（如 `244.6k/1.0M`），三段颜色预警：
-  - 🟢 绿色（< 60%）
-  - 🟡 黄色（60% - 85%）
-  - 🔴 红色（≥ 85%）
-- ⏳ **5 小时滚动配额跟踪** — 实时显示 5 小时内剩余额度百分比及重置倒计时（例如 `95% (4h 56m)`）。
-- 📅 **每周配额跟踪** — 实时显示每周剩余额度百分比及重置倒计时（例如 `99% (167h 56m)`）。
-- 🪶 **零外部依赖** — 纯 Python 3 标准库（`sys`、`json`、`os`）实现，原生跨平台支持 Windows、macOS 与 Linux。
+### 一键安装
 
----
-
-## ⚡ 快速安装
-
-### 方式 1：自动安装脚本（推荐）
-
-1. 克隆本仓库：
-   ```bash
-   git clone https://github.com/doraemonkeys/agy-statusline.git
-   cd agy-statusline
-   ```
-
-2. 运行安装脚本：
-   ```bash
-   python install.py
-   ```
-
-安装脚本将自动执行：
-- 将 `statusline.py` 复制到 `~/.gemini/antigravity-cli/statusline.py`
-- 自动备份你现有的 `settings.json`（带有时间戳）
-- 自动向 `settings.json` 写入 `"statusLine"` 命令钩子配置
-
-### 方式 2：手动配置
-
-1. 将 `statusline.py` 复制到 Antigravity CLI 配置目录下：
-   - **Windows**：`C:\Users\<你的用户名>\.gemini\antigravity-cli\statusline.py`
-   - **macOS / Linux**：`~/.gemini/antigravity-cli/statusline.py`
-
-2. 打开 `~/.gemini/antigravity-cli/settings.json`，在最外层加入或更新 `"statusLine"` 节点：
-
-   ```json
-   {
-     "statusLine": {
-       "type": "command",
-       "command": "python ~/.gemini/antigravity-cli/statusline.py",
-       "enabled": true
-     }
-   }
-   ```
-
-   *(Windows 环境建议使用正斜杠路径，例如 `"python C:/Users/<你的用户名>/.gemini/antigravity-cli/statusline.py"`)*。
-
----
-
-## 🔍 预览与测试
-
-无需启动 Antigravity，即可在终端直接预览状态栏的渲染效果：
+进入项目目录后，直接运行安装脚本即可完成配置：
 
 ```bash
-python statusline.py --preview
+cd /Users/boo/Projects/0xAiKang/agy-hud
+python3 install.py
 ```
 
-效果输出：
-```text
-🤖 3.8 Flash (High) │ 📁 agy-statusline │ 🌿 main │ ⚡ reviewing
-🧠 Context ██░░░░░░░░ 244.6k/1.0M (24.5%) │ ⏳ 5h: 95% (4h 56m) │ 📅 Wk: 99% (167h 56m)
+该脚本会自动：
+1. 备份你现有的 `~/.gemini/antigravity-cli/settings.json`。
+2. 写入 `statusLine` 配置，指向本地的 `statusline.py`。
+3. 立即运行预览并确认生效。
+
+### 终端测试与预览
+
+无需重启 Antigravity，即可在终端快速预览不同布局的效果：
+
+```bash
+# 预览当前默认模式
+python3 statusline.py --preview
+
+# 预览特定模式 (full / standard / compact / minimal)
+python3 statusline.py --preview standard
+python3 statusline.py --preview compact
+python3 statusline.py --preview minimal
 ```
 
 ---
 
-## 🛠️ 工作原理
+## ⚙️ 自由配置 (`config.json`)
 
-Google Antigravity CLI (`agy`) 在每次交互更新时，都会将当前环境状态的 JSON 数据流式写入标准输入（`stdin`）。`statusline.py` 读取并解析以下数据：
-- `model`: 模型配置及显示名
-- `cwd` / `workspace`: 当前工作目录
-- `agent_state`: Agent 当前生命周期状态
-- `context_window`: 当前使用的 Token 数、最大 Token 限制及使用比例
-- `quota`: 5 小时滚动配额、每周配额及重置秒数倒计时
+在项目根目录下创建或编辑 `config.json`（可参考 [`config.example.json`](config.example.json)）：
 
-最后格式化为带有 ANSI 颜色高亮的两行文本输出给 Antigravity HUD 渲染。
+```json
+{
+  "mode": "full",
+  "show_header": true,
+  "show_context": true,
+  "show_quotas": true,
+  "show_assets": true,
+  "show_tools": true,
+  "show_tokens": true,
+  "show_cost": true,
+  "show_duration": true,
+  "show_skills": true,
+  "progress_bar_width": 10,
+  "cost_currency": "$"
+}
+```
+
+- **`mode`**: 可选 `"full"`、`"standard"`、`"compact"`、`"minimal"`。
+- **细粒度开关**: 每一行与每一个指标（费用、时长、Skill、工具计数等）均支持单独通过 `true/false` 开关。
 
 ---
 
 ## 🗑️ 卸载
 
-如需卸载状态栏配置：
+如需恢复默认或移除状态栏配置：
 
 ```bash
-python install.py --uninstall
+python3 install.py --uninstall
 ```
-
-或者直接在 `settings.json` 中删除 `"statusLine"` 配置项即可。
 
 ---
 
-## 📄 开源协议
+## 📄 开源许可
 
-[MIT License](LICENSE) © 2025-2026 doraemonkeys
+本项目基于 [MIT License](LICENSE) 开源，原项目衍生自 [doraemonkeys/agy-statusline](https://github.com/doraemonkeys/agy-statusline)。
